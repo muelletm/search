@@ -36,25 +36,30 @@ class DataChunk:
         with doc.open("rb") as reader:
             self.documents = [Document(**d) for d in json.load(reader)]
 
-        # with title_embeddings.open("rb") as reader:
-        #     title_embeddings = np.load(reader)
-        #     title_embeddings /= np.linalg.norm(
-        #         title_embeddings, axis=-1, keepdims=True
-        #     )
+        with title_embeddings.open("rb") as reader:
+            title_embeddings = np.load(reader)
+            title_embeddings /= np.linalg.norm(
+                title_embeddings, axis=-1, keepdims=True
+            )
 
         with text_embeddings.open("rb") as reader:
             self.embeddings = np.load(reader)
-            # self.embeddings /= np.linalg.norm(
-            #     self.embeddings, axis=-1, keepdims=True
-            # )
+            self.embeddings /= np.linalg.norm(
+                self.embeddings, axis=-1, keepdims=True
+            )
 
         self.sentences = []
         for doc_index, doc in enumerate(self.documents):
             for text in doc.sentences:
-                # self.embeddings[len(self.sentences)] += title_embeddings[
-                #     doc_index
-                # ]
-                self.sentences.append(Sentence(doc_index=doc_index, text=text))
+                self.embeddings[len(self.sentences)] += title_embeddings[
+                    doc_index
+                ]
+                self.sentences.append(
+                    Sentence(
+                        doc_index=doc_index,
+                        text=text,
+                    )
+                )
 
     def search(self, embedding: np.ndarray, limit: int) -> List[Result]:
         embedding /= np.linalg.norm(embedding)
@@ -67,6 +72,16 @@ class DataChunk:
                 score=scores[i],
             )
             for i in indexes[:limit]
+            if not self.documents[
+                self.sentences[i].doc_index
+            ].title.startswith(
+                (
+                    "Usuario:",
+                    "Usuaria:",
+                    "Usuario discusión:",
+                    "Usuaria discusión:",
+                )
+            )
         ]
 
 
