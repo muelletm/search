@@ -72,9 +72,7 @@ class DataChunk:
                 score=scores[i],
             )
             for i in indexes[:limit]
-            if not self.documents[
-                self.sentences[i].doc_index
-            ].title.startswith(
+            if not self.documents[self.sentences[i].doc_index].title.startswith(
                 (
                     "Usuario:",
                     "Usuaria:",

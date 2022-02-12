@@ -1,3 +1,3 @@
 isort .
-black -l 79 .
+black -l 80 .
 flake8 .
