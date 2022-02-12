@@ -47,13 +47,13 @@ class XnliEvaluator(Evaluator):
         model_name: str,
         rows,
     ):
-        text_to_index = {text: index for index, text in enumerate(self.texts)}
-
         embeddings = self.get_embeddings(model_fn, model_name)
 
         embeddings = embeddings / np.linalg.norm(
             embeddings, axis=1, keepdims=True
         )
+
+        text_to_index = self.get_text_to_index()
 
         row = {
             "name": model_name,

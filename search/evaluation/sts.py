@@ -43,13 +43,13 @@ class StsEvaluator(Evaluator):
         model_name: str,
         rows,
     ):
-        text_to_index = {text: index for index, text in enumerate(self.texts)}
-
         embeddings = self.get_embeddings(model_fn, model_name)
 
         embeddings = embeddings / np.linalg.norm(
             embeddings, axis=1, keepdims=True
         )
+
+        text_to_index = self.get_text_to_index()
 
         assert len(self.texts) == len(text_to_index)
         assert len(self.texts) == len(embeddings)
@@ -70,8 +70,12 @@ class StsEvaluator(Evaluator):
             row[slice + " pearsonr"], _ = pearsonr(
                 slice_scores, slice_data["rating"]
             )
+            row[slice + " pearsonr"] = round(100 * row[slice + " pearsonr"], 1)
             row[slice + " spearmanr"], _ = spearmanr(
                 slice_scores, slice_data["rating"]
+            )
+            row[slice + " spearmanr"] = round(
+                100 * row[slice + " spearmanr"], 1
             )
 
         rows.append(row)

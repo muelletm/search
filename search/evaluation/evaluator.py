@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Callable, Set
+from typing import Callable, Dict, Set
 
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -25,31 +25,29 @@ class Evaluator(ABC):
         self, model_fn: Callable[[], SentenceTransformer], model_name: str
     ) -> np.ndarray:
 
-        self.texts = sorted(self.texts)
-
-        embeddings = []
+        texts = sorted(self.texts)
 
         output_dir = self.output_dir.joinpath(model_name)
         embeddings_path = output_dir.joinpath("embeddings.npy")
 
         if not embeddings_path.exists():
             model: SentenceTransformer = model_fn()
-
-            embeddings.append(
-                model.encode(
-                    self.texts,
-                    batch_size=self.batch_size,
-                    show_progress_bar=True,
-                )
+            embeddings = model.encode(
+                texts,
+                batch_size=self.batch_size,
+                show_progress_bar=True,
             )
-            embeddings = np.concatenate(embeddings, axis=0)
             embeddings_path.parent.mkdir(parents=True, exist_ok=True)
             with embeddings_path.open("bw") as writer:
                 np.save(writer, embeddings)
-
         else:
-
             with embeddings_path.open("br") as reader:
                 embeddings = np.load(reader)
 
         return embeddings
+
+    def get_text_to_index(self) -> Dict[str, int]:
+        text_to_index = {
+            text: index for index, text in enumerate(sorted(self.texts))
+        }
+        return text_to_index
