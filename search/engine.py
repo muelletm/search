@@ -33,38 +33,39 @@ class DataChunk:
         title_embeddings: Path,
         text_embeddings: Path,
     ):
-        with doc.open("rb") as reader:
-            self.documents = [Document(**d) for d in json.load(reader)]
+        raise NotImplementedError("Load documents")
+        self.documents = [Document(**d) for d in documents]
+        del documents
 
-        with title_embeddings.open("rb") as reader:
-            title_embeddings = np.load(reader)
-            title_embeddings /= np.linalg.norm(
-                title_embeddings, axis=-1, keepdims=True
-            )
+        raise NotImplementedError("Load title embeddings")
+        title_embeddings /= np.linalg.norm(
+            title_embeddings, axis=-1, keepdims=True
+        )
 
-        with text_embeddings.open("rb") as reader:
-            self.embeddings = np.load(reader)
-            self.embeddings /= np.linalg.norm(
-                self.embeddings, axis=-1, keepdims=True
-            )
+        raise NotImplementedError("Load text embeddings")
+        self.embeddings /= np.linalg.norm(
+            self.embeddings, axis=-1, keepdims=True
+        )
 
+        raise NotImplementedError("Populate sentences list!")
+
+       
         self.sentences = []
         for doc_index, doc in enumerate(self.documents):
             for text in doc.sentences:
-                self.embeddings[len(self.sentences)] += title_embeddings[
-                    doc_index
-                ]
+                raise NotImplementedError("Create sentence list!")
+                # Add title embeddings to embeddings
+                self.embeddings
+                # Add a Sentence to list!
                 self.sentences.append(
-                    Sentence(
-                        doc_index=doc_index,
-                        text=text,
-                    )
                 )
 
     def search(self, embedding: np.ndarray, limit: int) -> List[Result]:
-        embedding /= np.linalg.norm(embedding)
-        scores = np.inner(embedding, self.embeddings)
-        indexes = np.argsort(-scores)
+        raise NotImplementedError("Scoring")
+        # Normalize embedding
+        # Compute dot product between embedding and self.embeddings
+        # Get indexes of the highest scoring sentences.
+        indexes = ...
         return [
             Result(
                 doc=self.documents[self.sentences[i].doc_index],

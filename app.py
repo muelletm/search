@@ -45,39 +45,17 @@ engine = load_engine()
 
 model = load_model()
 
-query = st.text_input("query", value="¿Dónde nació Leonardo Da Vinci?")
+st.error("Create a text input for the query.")
 
-limit = st.slider("limit", min_value=1, max_value=50, value=5)
-
+st.error("Create a slider with the number of results to retrieve.")
 
 with st.spinner("Querying index ..."):
+    st.error("Get query embedding.")
+    st.error("Search results (engine.search).")
 
-    embedding = model.encode([query], show_progress_bar=False)[0]
-    results: List[Result] = engine.search(embedding, limit=limit)
+# Show the results.
+# You can use st.markdown to render markdown.
+# e.g. st.markdown("**text**") will add text in bold font.
 
-
-results_by_doc = collections.defaultdict(list)
-for r in results:
-    results_by_doc[r.doc.pageid].append(r)
-
-for rs in results_by_doc.values():
-    rs.sort(key=lambda r: r.score, reverse=True)
-
-result_groups = sorted(
-    results_by_doc.values(), key=lambda rs: rs[0].score, reverse=True
-)
-
-for rs in result_groups:
-
-    st.markdown(
-        f"#### {rs[0].doc.title} ([link](http://es.wikipedia.org/?curid={rs[0].doc.pageid}))"
-    )
-    for r in rs:
-        st.markdown(
-            f'<p class="big-font">{r.sentence.text}</p>',
-            unsafe_allow_html=True,
-        )
-        st.markdown(f"(**score**: {round(100.0*r.score,2)})")
-
-
+st.error("Render results")
 st.markdown(f"**Mem Usage**: {get_memory_usage()}MB")
