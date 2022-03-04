@@ -12,6 +12,8 @@ from search.utils import get_memory_usage
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
+_DATA_DIR = os.environ.get("DATA_DIR", "data/people_pm_minilm")
+
 st.set_page_config(page_title="Search Engine", layout="wide")
 
 st.markdown(
@@ -29,7 +31,7 @@ st.markdown(
 @st.cache(allow_output_mutation=True)
 def load_engine() -> Engine:
     engine = Engine(
-        data_dir=Path("/home/thomas/Downloads/people_pm_minilm"),
+        data_dir=Path(_DATA_DIR),
     )
     return engine
 

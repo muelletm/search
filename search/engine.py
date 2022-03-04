@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 from pydantic import BaseModel
@@ -84,7 +84,7 @@ class DataChunk:
 
 
 class Engine:
-    def __init__(self, data_dir: Path):
+    def __init__(self, data_dir: Path, limit: Optional[int] = None):
 
         doc_paths = sorted(data_dir.glob("doc_*.json"))
 
@@ -94,7 +94,11 @@ class Engine:
         print(datetime.now(), "loading data chunks...")
 
         self.chunks = []
-        for doc_path in doc_paths:
+        for nr, doc_path in enumerate(doc_paths):
+
+            if limit is not None and nr >= limit:
+                break
+
             # fmt: off
             index = doc_path.stem[doc_path.stem.find("_") + 1:]
             # fmt: on
