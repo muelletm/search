@@ -4,7 +4,7 @@ Simple embedding based search on wikipedia.
 
 # Installation
 
-## Clone Repoy
+## Clone Repo
 
 ```bash
 git clone git@github.com:muelletm/search.git
